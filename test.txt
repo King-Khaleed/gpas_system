@@ -1,0 +1,61 @@
+<?php
+// 1. Connect to the database
+$conn = new mysqli('localhost', 'root', '', 'your_database');
+
+// 2. Decide how many items (toys) per page
+$items_per_page = 5;
+
+// 3. Find out which page we’re on (e.g., page 1, page 2)
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Default to page 1
+$offset = ($page - 1) * $items_per_page; // Skip items from previous pages
+
+// 4. Get total number of toys (data)
+$result = $conn->query("SELECT COUNT(*) AS total FROM products");
+$total_items = $result->fetch_assoc()['total']; // Total number of toys
+$total_pages = ceil($total_items / $items_per_page); // Total pages needed
+
+// 5. Fetch only the toys for the current page
+$sql = "SELECT * FROM products LIMIT $items_per_page OFFSET $offset";
+$products = $conn->query($sql);
+
+// 6. Display the toys (data)
+while ($product = $products->fetch_assoc()) {
+    echo "<p>{$product['product_name']} - {$product['price']}</p>";
+}
+
+// 7. Show Next and Previous buttons
+if ($page > 1) {
+    echo "<a href='index.php?page=" . ($page - 1) . "'>Previous</a> ";
+}
+if ($page < $total_pages) {
+    echo "<a href='index.php?page=" . ($page + 1) . "'>Next</a>";
+}
+?>
+
+
+
+Explanation of the Code (Step-by-Step)
+Database Connection:
+
+We connect to the database (new mysqli()).
+Deciding Items Per Page:
+
+items_per_page = 5 means we want to show 5 toys per page.
+Finding the Current Page:
+
+$_GET['page'] checks the URL to see which page we’re on.
+Example: If the URL is index.php?page=2, the current page is 2.
+Skipping Previous Toys:
+
+If we’re on page 2, we skip 5 toys from page 1 using OFFSET.
+Counting Total Toys:
+
+COUNT(*) gives us the total number of toys (data).
+Fetching Toys for the Current Page:
+
+LIMIT decides how many toys to fetch (5).
+OFFSET skips toys from previous pages.
+Next and Previous Buttons:
+
+If there’s a previous page, show a "Previous" button.
+If there’s a next page, show a "Next" button.
