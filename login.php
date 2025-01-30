@@ -41,6 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <?php
+        // Get messages
+        if(isset($_GET['message'])) {
+            $message = $_GET['message'] ?? 'welcome';
+            echo "<script> alert('".  $message . "') </script>";    
+        }
+    ?>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto mt-10">

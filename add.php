@@ -13,16 +13,19 @@ $conn = new mysqli('localhost', 'root', '', 'gpas');
 
 // Check if there are any errors connecting to the database
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    echo "DATABASE ERROR: ". $conn->connect_error;
+    // die("Connection failed: " . $conn->connect_error);
 }
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product_name = $_POST['product_name'];
-    $price = $_POST['price'];
+    $price = $_POST['product_price'];
+
+    $user_id = $_SESSION['user_id'];
 
     // Insert the new post into the database
-    $sql = "INSERT INTO products (product_name, price) VALUES ('$product_name', '$price')";
+    $sql = "INSERT INTO products (user_id, product_name, product_price) VALUES ('$user_id', '$product_name', '$price')";
 
     if ($conn->query($sql)) {
         header("Location: dashboard.php");
@@ -54,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="mb-4">
                 <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Price:</label>
-                <input type="number" id="price" name="price" 
+                <input type="number" id="price" name="product_price" 
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#654caf]">
             </div>
             <button type="submit" 

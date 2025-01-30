@@ -16,11 +16,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
+
+    // Check the if user has an account
+
+    // Find the user in the database
+    $sql = "SELECT * FROM users WHERE email = '$email'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+            $msg = "You already have an account!";
+            header("Location: login.php?message=" . $msg);
+            exit;
+    }
+
+
     // Insert user into the database
     $sql = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')";
 
     if ($conn->query($sql)) {
-        echo "Account created successfully. <a href='login.php'>Log In</a>";
+        $msg = "Account created successfully";
+
+        // Redirect if user is not logged in
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: dashboard.php?message=" . $msg);
+            exit;
+        }        
     } else {
         echo "Error: " . $conn->error;
     }
@@ -33,6 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <?php
+        // Get messages
+        if(isset($_GET['message'])) {
+            $message = $_GET['message'] ?? 'welcome';
+            echo "<script> alert('".  $message . "') </script>";    
+        }
+    ?>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto mt-10">
